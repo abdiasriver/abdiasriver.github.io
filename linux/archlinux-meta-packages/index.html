@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Automating Arch Linux Part 2: Managing Arch Linux with Meta Packages | AbdiasRiver</title>
+    <meta name="description" content="Show how you can use meta package to manage multiple arch linux systems">
+    <link rel="icon" href="/logo.png">
+    
+    <link rel="preload" href="/assets/css/styles.45b43183.css" as="style"><link rel="preload" href="/assets/js/app.45b43183.js" as="script"><link rel="preload" href="/assets/js/16.b90f9255.js" as="script"><link rel="prefetch" href="/assets/css/11.styles.f0b00976.css"><link rel="prefetch" href="/assets/css/5.styles.032c0f91.css"><link rel="prefetch" href="/assets/css/6.styles.254e9cf0.css"><link rel="prefetch" href="/assets/css/7.styles.b3f05a01.css"><link rel="prefetch" href="/assets/js/1.ff8e5d62.js"><link rel="prefetch" href="/assets/js/10.378c4324.js"><link rel="prefetch" href="/assets/js/11.f0b00976.js"><link rel="prefetch" href="/assets/js/12.0ac8eb7d.js"><link rel="prefetch" href="/assets/js/13.50bcc067.js"><link rel="prefetch" href="/assets/js/14.88556099.js"><link rel="prefetch" href="/assets/js/15.094b0aff.js"><link rel="prefetch" href="/assets/js/17.1c6e59b2.js"><link rel="prefetch" href="/assets/js/2.9b68cdda.js"><link rel="prefetch" href="/assets/js/3.01543aac.js"><link rel="prefetch" href="/assets/js/4.45e65c70.js"><link rel="prefetch" href="/assets/js/5.032c0f91.js"><link rel="prefetch" href="/assets/js/6.254e9cf0.js"><link rel="prefetch" href="/assets/js/7.b3f05a01.js"><link rel="prefetch" href="/assets/js/8.617d2ece.js"><link rel="prefetch" href="/assets/js/9.82254250.js">
+    <link rel="stylesheet" href="/assets/css/11.styles.f0b00976.css"><link rel="stylesheet" href="/assets/css/5.styles.032c0f91.css"><link rel="stylesheet" href="/assets/css/6.styles.254e9cf0.css"><link rel="stylesheet" href="/assets/css/7.styles.b3f05a01.css"><link rel="stylesheet" href="/assets/css/styles.45b43183.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/" class="home-link router-link-active"><!----> <span class="site-name">AbdiasRiver</span></a> <div class="links" style="max-width:nullpx;"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/" class="nav-link">Home</a></div><div class="nav-item"><a href="/blog/" class="nav-link">Blog</a></div><div class="nav-item"><a href="/linux/" class="nav-link router-link-active">Linux</a></div><div class="nav-item"><a href="/windows/" class="nav-link">Windows</a></div><div class="nav-item"><a href="https://github.com/abdiasriver" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  Github
+  <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <div class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/" class="nav-link">Home</a></div><div class="nav-item"><a href="/blog/" class="nav-link">Blog</a></div><div class="nav-item"><a href="/linux/" class="nav-link router-link-active">Linux</a></div><div class="nav-item"><a href="/windows/" class="nav-link">Windows</a></div><div class="nav-item"><a href="https://github.com/abdiasriver" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  Github
+  <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></div> <!----></nav>  <ul class="sidebar-links"><li><a href="/linux/archlinux-repo-in-aws-bucket/" class="sidebar-link">Hosting an Arch Linux Repo in an Amazon S3 Bucket</a></li><li><a href="/linux/archlinux-meta-packages/" class="active sidebar-link">Managing Arch Linux with Meta Packages</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/linux/archlinux-meta-packages/#what-are-meta-packages" class="sidebar-link">What are Meta-Packages</a></li><li class="sidebar-sub-header"><a href="/linux/archlinux-meta-packages/#organising-our-meta-packages" class="sidebar-link">Organising Our Meta-Packages</a></li><li class="sidebar-sub-header"><a href="/linux/archlinux-meta-packages/#creating-a-meta-package" class="sidebar-link">Creating a Meta-Package</a></li><li class="sidebar-sub-header"><a href="/linux/archlinux-meta-packages/#building-the-package" class="sidebar-link">Building the Package</a></li><li class="sidebar-sub-header"><a href="/linux/archlinux-meta-packages/#git-repo-and-scripting-the-build" class="sidebar-link">Git Repo and Scripting the Build</a></li><li class="sidebar-sub-header"><a href="/linux/archlinux-meta-packages/#example-config-meta-packages" class="sidebar-link">Example Config Meta-Packages</a></li><li class="sidebar-sub-header"><a href="/linux/archlinux-meta-packages/#summary" class="sidebar-link">Summary</a></li></ul></li><li><a href="/linux/archlinux-installer/" class="sidebar-link">Creating a Custom Arch Linux Installer</a></li></ul> </div> <div class="page"> <div class="content"><h1 id="automating-arch-linux-part-2-managing-arch-linux-with-meta-packages"><a href="#automating-arch-linux-part-2-managing-arch-linux-with-meta-packages" aria-hidden="true" class="header-anchor">#</a> Automating Arch Linux Part 2: Managing Arch Linux with Meta Packages</h1> <p>In this three-part series, I will show you one way to simplify and manage
+multiple Arch Linux systems using a custom repo, a set of meta-packages and a
+scripted installer. Each part is standalone and can be used by its self, but
+they are designed to build upon and complement each other each focusing on a
+different part of the problem.</p> <ul><li><strong>Part 1:</strong> <a href="/linux/archlinux-repo-in-aws-bucket/">Hosting an Arch Linux Repo in an Amazon S3 Bucket</a></li> <li><strong>Part 2:</strong> <em>Managing Arch Linux with Meta Packages</em></li> <li><strong>Part 3:</strong> <a href="/linux/archlinux-installer/">Creating a Custom Arch Linux Installer</a></li></ul> <p>I really enjoy Arch Linux for its customisation - you can truly make it <em>your</em>
+own. But while crafting your system exactly how you want it once can be a fun
+and rewarding experience, repeating this process on multiple computers becomes
+tedious. Worst, it very easily leads to inconsistencies between each system as
+you forget things that you configured or as you slowly evolve your configs on
+each system you set up. The more systems you manage the worst this problem
+becomes.</p> <p>There are a fair few applications that aim to make this easier, most notably
+the plethora of <em><a href="https://wiki.archlinux.org/index.php/Dotfiles" target="_blank" rel="noopener noreferrer">dotfile managers<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></em> out there. I have used a few of these over
+the years and they all suffer from the same problem; they are only designed to
+manage user files. I want to manage my whole system. I used <a href="https://saltstack.com/" target="_blank" rel="noopener noreferrer">SaltStack<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a> for <a href="https://github.com/mdaffin/salt-arch" target="_blank" rel="noopener noreferrer">a
+while<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a> but started to dislike it when it became hard to debug
+problems (salts error handling is quite bad) and I kept forgetting to run
+<code>salt-call state.apply</code> to resync my systems.</p> <p>My ultimate goal is to find a way to automatically install Arch Linux on a
+system with minimal input (only things like hostname, username, password etc).
+As well as for a way to automatically update all of my systems whenever I
+change a config or add/remove a package. Ideally just running <code>pacman -Syu</code> on
+a system to sync all the configs from a master set. In this post, I will show
+you how I solved this second goal using the repo I set up in my <a href="/linux/archlinux-repo-in-aws-bucket/">last post</a>
+with a set of custom <a href="https://wiki.archlinux.org/index.php/creating_packages" target="_blank" rel="noopener noreferrer">meta-packages<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a>.</p> <h2 id="what-are-meta-packages"><a href="#what-are-meta-packages" aria-hidden="true" class="header-anchor">#</a> What are Meta-Packages</h2> <p>Simply put, meta-packages are packages that do nothing but depend on other
+packages. The result of this is that you can install a group of packages at
+once by installing a single meta-packages. Now, Arch Linux has a similar
+concept; package groups, and while they serve a similar purpose they are
+suitably different. This difference is when you add or remove dependencies -
+groups will not install/remove additional dependencies whereas meta packages
+will, this is exactly what we want. When a dependency is added all our systems
+to automatically install it when they update.</p> <p>Now, we are going to abuse this concept slightly and not only use them to
+install groups of packages via dependencies but also to install related system
+configuration. This is not something <code>pacman</code> is really designed to do and
+results in some hacky workaround which we will discuss below. The end result,
+however, works very well in practice.</p> <h2 id="organising-our-meta-packages"><a href="#organising-our-meta-packages" aria-hidden="true" class="header-anchor">#</a> Organising Our Meta-Packages</h2> <p>You can create as many or as few meta-packages as you require. The more you
+have, the more there is to maintain. The less you have the less flexible they
+become. How many you require depends on your needs but I recommend starting
+with few large packages that do the bulk of the work that is common to all or
+most of your systems. Then create smaller more specific ones, that depends on
+these more general ones.</p> <p>For example, I have <a href="https://github.com/mdaffin/arch-pkgs/tree/5ce54e82b1d763c18493fda3d9bb78bd8a5b9786/pkg/base" target="_blank" rel="noopener noreferrer"><code>mdaffin-base</code><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a> that contains everything that I require on
+all of my systems. Then <a href="https://github.com/mdaffin/arch-pkgs/tree/5ce54e82b1d763c18493fda3d9bb78bd8a5b9786/pkg/desktop" target="_blank" rel="noopener noreferrer"><code>mdaffin-desktop</code><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a> for any system that needs a desktop
+interface, such as my desktops and laptops. This package depends on
+<a href="https://github.com/mdaffin/arch-pkgs/tree/5ce54e82b1d763c18493fda3d9bb78bd8a5b9786/pkg/base" target="_blank" rel="noopener noreferrer"><code>mdaffin-base</code><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a> so I still only have one package to install. But then I have a
+<a href="https://github.com/mdaffin/arch-pkgs/tree/5ce54e82b1d763c18493fda3d9bb78bd8a5b9786/pkg/dell-xps-13" target="_blank" rel="noopener noreferrer"><code>mdaffin-dell-xps-13</code><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a> which contains very specific settings only useful on my
+laptop. This, in turn, depends on <a href="https://github.com/mdaffin/arch-pkgs/tree/5ce54e82b1d763c18493fda3d9bb78bd8a5b9786/pkg/desktop" target="_blank" rel="noopener noreferrer"><code>mdaffin-desktop</code><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a>.</p> <p>Separate to this I have <a href="https://github.com/mdaffin/arch-pkgs/tree/5ce54e82b1d763c18493fda3d9bb78bd8a5b9786/pkg/devel" target="_blank" rel="noopener noreferrer"><code>mdaffin-devel</code><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a> package that contains a whole bunch
+of development tools and languages that I commonly use and want on any system
+that I do development on. Changing a system to a development system becomes as
+simple as <code>pacman -S mdaffin-devel</code>.</p> <p>In the future, I might have a <code>mdaffin-laptop</code> or <code>mdaffin-server</code> as or when I
+decide I will require them but for now, these systems will be based off one of
+the existing packages.</p> <p>One major advantage of using meta-packages like this is it is very simple to
+see how your system is configured with simple <code>pacman</code> commands, for example,
+to see packages that were explicitly installed run the following.</p> <div class="language-bash extra-class"><pre class="language-bash"><code>% pacman -Qe
+hugo 0.34-1
+krita 3.3.3-1
+mdaffin-dell-xps-13 0.0.2-1
+mdaffin-devel 0.0.3-1
+powertop 2.9-1
+s3fs-fuse 1.80-2
+</code></pre></div><p>Or to see all of our meta-packages are install run the following.</p> <div class="language-bash extra-class"><pre class="language-bash"><code>% pacman -Qqs mdaffin-
+mdaffin-base
+mdaffin-dell-xps-13
+mdaffin-desktop
+mdaffin-devel
+</code></pre></div><p>This is a hidden and quite powerful feature of this method. Whereas on most
+Arch Linux systems you might see hundreds of packages explicitly installed with
+no way to track why you installed them, we only have a handful. This is
+actually very useful as it lets you track bloat on your systems over time where
+you can either promote them to one of your meta-packages if you use them a lot
+or remove them from your systems if you don't. You also have the option of
+commenting the dependencies in your meta-packages to remind you why you added
+them.</p> <h2 id="creating-a-meta-package"><a href="#creating-a-meta-package" aria-hidden="true" class="header-anchor">#</a> Creating a Meta-Package</h2> <p>All you require to build a meta-package is a <code>PKGBUILD</code> file along with any
+configs you want. You can read more about the finer details about <a href="https://wiki.archlinux.org/index.php/creating_packages#Meta_packages_and_groups" target="_blank" rel="noopener noreferrer">creating a
+package<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a> and the <a href="https://wiki.archlinux.org/index.php/PKGBUILD" target="_blank" rel="noopener noreferrer">PKGBUILD<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a> file structure, both of which are worth a read or
+at least to look up as a reference.</p> <p>So, the first part of creating meta-packages is specifying dependencies. For
+this we need a minimal <code>PKGBUILD</code> file, all you need to do is fill in the
+details with your own and flesh out the dependency list.</p> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token comment"># Maintainer: Michael Daffin &lt;michael@daffin.io&gt;</span>
+pkgname<span class="token operator">=</span>mdaffin-base
+pkgver<span class="token operator">=</span>0.0.1
+pkgrel<span class="token operator">=</span>1
+pkgdesc<span class="token operator">=</span><span class="token string">&quot;Base system configuration for mdaffin systems&quot;</span>
+arch<span class="token operator">=</span><span class="token punctuation">(</span><span class="token string">'any'</span><span class="token punctuation">)</span>
+url<span class="token operator">=</span><span class="token string">&quot;https://github.com/mdaffin/arch-pkgs&quot;</span>
+license<span class="token operator">=</span><span class="token punctuation">(</span><span class="token string">'MIT'</span><span class="token punctuation">)</span>
+depends<span class="token operator">=</span><span class="token punctuation">(</span>
+    <span class="token comment"># package list</span>
+<span class="token punctuation">)</span>
+</code></pre></div><h3 id="adding-dependencies"><a href="#adding-dependencies" aria-hidden="true" class="header-anchor">#</a> Adding Dependencies</h3> <p>List the packages you want to be installed with this package in the <code>depends</code>
+block, as quoted strings separated by white space (such as a newline). A good
+set of packages to start with is the <code>base</code> group. But there is a problem - you
+cannot specify groups of packages as dependencies. Instead, we must first
+expand the group to get a list of packages in that group.</p> <div class="language-bash extra-class"><pre class="language-bash"><code> % pacman -Sqg base
+<span class="token function">bash</span>
+<span class="token function">bzip2</span>
+coreutils
+<span class="token punctuation">..</span>.
+<span class="token function">which</span>
+xfsprogs
+</code></pre></div><p>Then surround all of these with quotes and include them in the depends list
+like so.</p> <div class="language-bash extra-class"><pre class="language-bash"><code>depends<span class="token operator">=</span><span class="token punctuation">(</span>
+    <span class="token string">'bash'</span>
+    <span class="token string">'bzip2'</span>
+    <span class="token string">'coreutils'</span>
+    <span class="token punctuation">..</span>.
+    <span class="token string">'which'</span>
+    <span class="token string">'xfsprogs'</span>
+<span class="token punctuation">)</span>
+</code></pre></div><p>And there, that's our first meta package. Although, it's currently not much
+more helpful than the base group so go ahead and add any additional packages
+you want. For example, I have added these (as well as many others) to the list
+as I use them on all of my systems.</p> <div class="language-bash extra-class"><pre class="language-bash"><code>    <span class="token string">'sudo'</span>
+    <span class="token string">'neovim'</span>
+    <span class="token string">'avahi'</span>
+    <span class="token string">'nss-mdns'</span>
+</code></pre></div><h3 id="adding-config-files"><a href="#adding-config-files" aria-hidden="true" class="header-anchor">#</a> Adding Config Files</h3> <p>Adding a config file to a package is done just like any other package except
+you also add it to the <code>backup</code> array in the <code>PKGBUILD</code>. This instructs pacman
+to not replace the file during an upgrade if the user has modified it at all.
+But we don't want this for our package - rather, we want to treat config files
+as any other package file so that it is replaced on an upgrade. We do this to
+stop the configs from drifting apart at the risk of losing some changes to one
+system if you don't add those changes back to the package.</p> <p>Some packages don't drop a default config, while others will read and merge all
+files inside a certain directory. These types of packages are easy to add
+configs for, we just add the file to our package and let packman place it in
+the correct place. To do this place the configs you want next to the <code>PKGBUILD</code>
+and add it to the <code>sources</code> array with a corresponding entry in <code>md5sum</code> or
+<code>sha256sum</code> (or equivalent) arrays. Then add an <code>install</code> line in the <code>package</code>
+function to copy the file to the correct location inside <code>$pkgdir</code>, like so:</p> <div class="language-bash extra-class"><pre class="language-bash"><code>source<span class="token operator">=</span><span class="token punctuation">(</span><span class="token string">'vconsole.conf'</span>
+        <span class="token string">'sudoers.wheel'</span>
+        <span class="token string">'mdaffin-base.sh'</span><span class="token punctuation">)</span>
+md5sums<span class="token operator">=</span><span class="token punctuation">(</span><span class="token string">'12733d28ff3b5352ea1c3d84b27cd6bd'</span>
+         <span class="token string">'52719e50fbbea8255275964ba70aa0a7'</span>
+         <span class="token string">'9463e8e19ee914684f7bd5190243aa3f'</span><span class="token punctuation">)</span>
+
+package<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">install</span> -Dm 0644 vconsole.conf <span class="token string">&quot;<span class="token variable">$pkgdir</span>/etc/vconsole.conf&quot;</span>
+    <span class="token function">install</span> -Dm 0640 sudoers.wheel <span class="token string">&quot;<span class="token variable">$pkgdir</span>/etc/sudoers.d/wheel&quot;</span>
+    <span class="token function">install</span> -Dm 0755 mdaffin-base.sh <span class="token string">&quot;<span class="token variable">$pkgdir</span>/etc/profile.d/mdaffin-base.sh&quot;</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>With this, pacman will drop our configs in the given locations when the package
+is installed. It will replace them if we upgrade the package in the future and
+will prevent any other package from directly modifying them.</p> <h3 id="overwriting-existing-configs"><a href="#overwriting-existing-configs" aria-hidden="true" class="header-anchor">#</a> Overwriting Existing Configs</h3> <p>However, most packages drop a default config file to give the users a base to
+start editing and do not support config directories. These are problematic as
+pacman will not allow us to simply install our config over them. Unfotinuatly,
+pacman has no nice way around this limitation but there is a slightly hacky way
+to work around the problem using pacman's install hooks.</p> <p>Instead of dropping the config file directly into place, we can drop it
+alongside the existing file, that way we get no conflict with other packages.
+Then we can use the <code>post_install</code> and <code>post_upgrade</code> hooks to copy our config
+into place.</p> <p>The downside of this approach is that pacman does not own or manage the
+lifecycle of this file, at least not with our package. It will still treat it
+as a config file for the original package, to be backed up or removed upon the
+removal of the original package. It will also not be reverted when we remove
+our package, although, this can be worked around by using the <code>post_install</code>
+hook to backup the original config and the <code>pre_remove</code> hook to restore it if
+you desire. If anyone knows of a better solution to this problem I would love
+to hear from you.</p> <p>Let's take a look at how I did this with my i3 config file in my
+<code>mdaffin-desktop</code> package. First, we install the config file like we did in the
+previous section, but this time next to the original package's config.</p> <div class="language-bash extra-class"><pre class="language-bash"><code>source<span class="token operator">=</span><span class="token punctuation">(</span><span class="token string">'i3-config'</span><span class="token punctuation">)</span>
+md5sums<span class="token operator">=</span><span class="token punctuation">(</span><span class="token string">'d9dcd133475af688ed86a879821c9384'</span><span class="token punctuation">)</span>
+package<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">install</span> -Dm 0644 i3-config <span class="token string">&quot;<span class="token variable">$pkgdir</span>/etc/i3/mdaffin-desktop-config&quot;</span>
+<span class="token punctuation">}</span>
+
+</code></pre></div><p>Then we define the hooks in a separate install file, which is a bash script
+with at least one of the following functions defined.</p> <ul><li><code>pre_install()</code> - runs before the package contents are installed the first
+time the package is installed</li> <li><code>post_install()</code> - after the package contents are installed the first time
+the package is installed</li> <li><code>pre_upgrade()</code> - before the package contents are installed when a package is
+being upgraded</li> <li><code>post_upgrade()</code> - after the package contents are installed when a package is
+being upgraded</li> <li><code>pre_remove()</code> - before the package contents are removed when a package is
+being removed</li> <li><code>post_remove()</code> - after the package contents are removed when a package is
+being removed</li></ul> <p>Let's call this file <code>mdaffin-desktop.install</code>, once again place it next to the
+<code>PKGBUILD</code> file. It can be called whatever you want but
+<code>&lt;package-name&gt;.install</code> is how it is conventionally named.</p> <div class="language-bash extra-class"><pre class="language-bash"><code>post_install<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    post_upgrade
+<span class="token punctuation">}</span>
+
+post_upgrade<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">cp</span> /etc/i3/mdaffin-desktop-config /etc/i3/config
+<span class="token punctuation">}</span>
+</code></pre></div><p>These run during an install or upgrade and copy the packaged configs to their
+destination, overwriting the configs that the upstream package dropped.</p> <p>Next, we need to tell makepkg about this install file by adding the following
+to <code>PKGBUILD</code>.</p> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token punctuation">..</span>.
+install<span class="token operator">=</span>mdaffin-desktop.install
+<span class="token punctuation">..</span>.
+</code></pre></div><p>Which tells makepkg to include this install script in the package and pacman
+will run the relevant functions during an install or upgrade of the package.</p> <h3 id="starting-services"><a href="#starting-services" aria-hidden="true" class="header-anchor">#</a> Starting Services</h3> <p>One more common thing we want to do is enable/start services. Typically, Arch
+Linux does not auto enable or start services on a package install, instead, it
+leaves this up to the user. Normally, this is a better approach as it lets you
+configure them before they are started for the first time. But we are
+configuring the applications with our meta-packages so why not enable and start
+the services as well.</p> <p>The <code>post_install</code> hook from the previous section can also be used to get
+<code>systemctl</code> to start and enable the service on the first install, where the
+user is then free to disable/stop it thereafter. We could also add it to the
+<code>post_upgrade</code> hook to ensure it gets reenabled after an upgrade, or if you add
+an extra service to a package later on. For example, my desktop package has
+these in the install script (in addition to the things in the previous
+section).</p> <div class="language-bash extra-class"><pre class="language-bash"><code>post_install<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    systemctl <span class="token function">enable</span> --now sddm
+    systemctl <span class="token function">enable</span> --now avahi-daemon
+<span class="token punctuation">}</span>
+</code></pre></div><p>Note that <code>--now</code> on a <code>systemctl enable</code> causes it to also start the service
+in addition to enabling it, basically equivalent to <code>systemctl start</code> and
+<code>systemctl enable</code> in one command. <code>systemctl</code> will also behave correctly
+inside a chroot environment (such as when pacstraping a system).</p> <h2 id="building-the-package"><a href="#building-the-package" aria-hidden="true" class="header-anchor">#</a> Building the Package</h2> <p>Once you have crafted a package to your liking it is time to build it. This can
+be done with <code>makepkg</code> as anyone who has built a package from AUR should be
+aware. But instead, I will make use of its lesser-known wrapper <code>makechrootpkg</code>
+(part of the same package as <code>makepkg</code>). While a little bit involved it does
+provide a clean build for packages by building them in a fresh chroot
+environment rather than on your host system. The downside is that it takes some
+prep work and is a little slower. Feel free to continue to use <code>makepkg</code> if you
+want.</p> <p>To save time on installing a base arch system into each chroot, <code>makechrootpkg</code>
+relies on a preprepared root which it copies for each package it builds. We can
+create this root fs by running <code>mkarchroot</code>.</p> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token function">mkdir</span> -p ./chroots
+mkarchroot -C /etc/pacman.conf ./chroots/root base-devel
+</code></pre></div><p><code>chroot</code> is where all of the chroots for each of our build environments will
+live and <code>root</code> is the base root fs <code>makechrootpkg</code> will use as a base for each
+environment by default.</p> <p>While inside our packages directory run <code>makechrootpkg</code> and tell it what
+directory to use for the chroot environments (<code>-r</code>).</p> <div class="language-bash extra-class"><pre class="language-bash"><code>makechrootpkg -cur ./chroots
+</code></pre></div><p>Once done you will end up with a <code>&lt;package&gt;-&lt;version&gt;.pkg.tar.xz</code> package in
+the current directory just like with <code>makepkg</code>.</p> <p>For the last step, we will install this package into a repo, such as the one I
+showed you how to create in my <a href="/linux/archlinux-repo-in-aws-bucket/">last post</a>.</p> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token comment"># Copy the live repo down</span>
+<span class="token function">mkdir</span> -p local-repo
+s3cmd <span class="token function">sync</span> s3://mdaffin-arch/repo/x86_64/mdaffin.<span class="token punctuation">{</span>db,files<span class="token punctuation">}</span>.tar.xz local-repo/
+<span class="token function">ln</span> -sf local-repo/mdaffin.db.tar.xz local-repo/mdaffin.db
+<span class="token function">ln</span> -sf local-repo/mdaffin.files.tar.xz local-repo/mdaffin.files
+<span class="token comment"># Add the packages to the repo</span>
+repo-add local-repo/mdaffin.db.tar.xz *.pkg.tar.xz
+<span class="token comment"># Upload the packages as well as the changed repo</span>
+s3cmd <span class="token function">sync</span> --follow-symlinks --acl-public *.pkg.tar.xz \
+    local-repo/mdaffin.<span class="token punctuation">{</span>db,files<span class="token punctuation">}</span><span class="token punctuation">{</span>,.tar.xz<span class="token punctuation">}</span> \
+    s3://mdaffin-arch/repo/x86_64/
+</code></pre></div><p>You can now install this package like you do any other package with <code>pacman</code>,
+as long as you have your repo added to <code>/etc/pacman.conf</code>.</p> <h2 id="git-repo-and-scripting-the-build"><a href="#git-repo-and-scripting-the-build" aria-hidden="true" class="header-anchor">#</a> Git Repo and Scripting the Build</h2> <p>Now that we can create meta-package and publish them for use let's place these
+in a git repo (or another version control system if you prefer) and write a
+wrapper script to make building/uploading the packages even easier. You can
+find <a href="https://github.com/mdaffin/arch-pkgs" target="_blank" rel="noopener noreferrer">my repo<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a> on GitHub, feel free to use it as a reference or clone it to
+create your own but the packages in there are tuned to my liking and so I
+encourage you to create your own with how you like your systems setup.</p> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token function">mkdir</span> arch-pkgs
+<span class="token function">cd</span> arch-pkgs
+<span class="token function">git</span> init
+</code></pre></div><p>I like to put all of my packages inside <code>pkg/&lt;package name&gt;</code> to keep them in
+one place. So let's copy the package we created above to that location</p> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token function">mkdir</span> pkg
+<span class="token function">cp</span> -r ~/mdaffin-base pkg/mdaffin-base
+</code></pre></div><p>But there a whole bunch of temporary/generated files we don't want to commit
+to. Let's add a gitignore for these.</p> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token function">cat</span> <span class="token operator">&lt;&lt;</span><span class="token string">'EOF'</span> <span class="token operator">&gt;</span>.gitignore
+*.pkg.tar.xz
+*.tar.gz
+/pkg/**/pkg/
+/pkg/**/src/
+repo/
+*.log
+/root/
+EOF
+</code></pre></div><p>Now stage these files and check we are not including anything we don't want.</p> <div class="language-bash extra-class"><pre class="language-bash"><code>% <span class="token function">git</span> add <span class="token keyword">.</span>
+% <span class="token function">git</span> status
+On branch master
+
+No commits yet
+
+Changes to be committed:
+  <span class="token punctuation">(</span>use <span class="token string">&quot;git rm --cached &lt;file&gt;...&quot;</span> to unstage<span class="token punctuation">)</span>
+
+    new file:   .gitignore
+    new file:   pkg/mdaffin-base/PKGBUILD
+    new file:   pkg/mdaffin-base/mdaffin-base.install
+    new file:   pkg/mdaffin-base/mdaffin-base.sh
+    new file:   pkg/mdaffin-base/sudoers.wheel
+    new file:   pkg/mdaffin-base/vconsole.conf
+</code></pre></div><p>If anything is listed that you don't want, just add it to the <code>.gitignore</code> and
+run <code>git reset &lt;file&gt;</code>. Repeat until you are happy then commit.</p> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token function">git</span> commit -m <span class="token string">&quot;My first package&quot;</span>
+</code></pre></div><h3 id="the-build-script"><a href="#the-build-script" aria-hidden="true" class="header-anchor">#</a> The Build Script</h3> <p>The commands above can be wrapped into a helper script to make building and
+uploading the packages very simple. Here is the script in its entirety.</p> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token shebang important">#!/bin/bash</span>
+<span class="token comment"># Wraps aursync command to mount an amazon s3 bucket which contains a repository</span>
+<span class="token keyword">set</span> -uo pipefail
+<span class="token function">trap</span> <span class="token string">'s=<span class="token variable">$?</span>; echo &quot;<span class="token variable">$0</span>: Error on line &quot;<span class="token variable">$LINENO</span>&quot;: <span class="token variable">$BASH_COMMAND</span>&quot;; exit <span class="token variable">$s</span>'</span> ERR
+
+REMOTE_PATH<span class="token operator">=</span>s3://mdaffin-arch/repo/x86_64
+LOCAL_PATH<span class="token operator">=</span><span class="token variable">$HOME</span>/.local/share/arch-repo
+REPO_NAME<span class="token operator">=</span>mdaffin
+
+PACKAGES<span class="token operator">=</span><span class="token variable">${@:-pkg/*}</span>
+CHROOT<span class="token operator">=</span><span class="token string">&quot;<span class="token variable">$PWD</span>/root&quot;</span>
+
+<span class="token function">mkdir</span> -p <span class="token string">&quot;<span class="token variable">$LOCAL_PATH</span>&quot;</span>
+<span class="token function">mkdir</span> -p <span class="token string">&quot;<span class="token variable">$CHROOT</span>&quot;</span>
+
+<span class="token punctuation">[</span><span class="token punctuation">[</span> -d <span class="token string">&quot;<span class="token variable">$CHROOT</span>/root&quot;</span> <span class="token punctuation">]</span><span class="token punctuation">]</span> <span class="token operator">||</span> mkarchroot -C /etc/pacman.conf <span class="token string">&quot;<span class="token variable">$CHROOT</span>/root&quot;</span> base base-devel
+
+<span class="token keyword">for</span> package <span class="token keyword">in</span> <span class="token variable">$PACKAGES</span><span class="token punctuation">;</span> <span class="token keyword">do</span>
+    <span class="token function">cd</span> <span class="token string">&quot;<span class="token variable">$package</span>&quot;</span>
+    <span class="token function">rm</span> -f *.pkg.tar.xz
+    makechrootpkg -cur <span class="token variable">$CHROOT</span>
+    <span class="token function">cd</span> -
+<span class="token keyword">done</span>
+
+s3cmd <span class="token function">sync</span> <span class="token string">&quot;<span class="token variable">$REMOTE_PATH</span>/<span class="token variable">$REPO_NAME</span>&quot;</span>.<span class="token punctuation">{</span>db,files<span class="token punctuation">}</span>.tar.xz <span class="token string">&quot;<span class="token variable">$LOCAL_PATH</span>/&quot;</span>
+<span class="token function">ln</span> -sf <span class="token string">&quot;<span class="token variable">$REPO_NAME</span>.db.tar.xz&quot;</span> <span class="token string">&quot;<span class="token variable">$LOCAL_PATH</span>/<span class="token variable">$REPO_NAME</span>.db&quot;</span>
+<span class="token function">ln</span> -sf <span class="token string">&quot;<span class="token variable">$REPO_NAME</span>.files.tar.xz&quot;</span> <span class="token string">&quot;<span class="token variable">$LOCAL_PATH</span>/<span class="token variable">$REPO_NAME</span>.files&quot;</span>
+
+repo-add <span class="token string">&quot;<span class="token variable">$LOCAL_PATH</span>/<span class="token variable">$REPO_NAME</span>.db.tar.xz&quot;</span> <span class="token string">&quot;<span class="token variable">${PACKAGES[@]}</span>/&quot;</span>*.pkg.tar.xz
+s3cmd <span class="token function">sync</span> --follow-symlinks --acl-public \
+    <span class="token string">&quot;<span class="token variable">${PACKAGES[@]}</span>/&quot;</span>*.pkg.tar.xz \
+    <span class="token string">&quot;<span class="token variable">$LOCAL_PATH</span>/<span class="token variable">$REPO_NAME</span>&quot;</span>.<span class="token punctuation">{</span>db,files<span class="token punctuation">}</span><span class="token punctuation">{</span>,.tar.xz<span class="token punctuation">}</span> \
+    <span class="token string">&quot;<span class="token variable">$REMOTE_PATH</span>/&quot;</span>
+</code></pre></div><p>It starts with some boilerplate code which I will skip over, read [this
+post][bash-strict-mode] for more details about it.</p> <p>Some useful variables are then defined, <code>${@:-pkg/*}</code> means take all arguments,
+but if there are none it defaults to <code>pkg/*</code>. This allows us to build a single
+package, any number of packages or by default all packages. <code>REMOTE_PATH</code> and
+<code>REPO_NAME</code> should be changed to match your repo.</p> <p>We create the chroot directory and init the main root fs if it does not already
+exist. Then loop over all the packages to build them one at a time with
+<code>makechrootpkg</code>, during which we delete all old package files left over from
+previous builds. This keeps the list of built packages down and ensures we only
+upload the latest build version.</p> <p>Lastly, we sync down the remote database to a local cache, add the built
+packages to the database then upload all the artefacts back up to the S3
+bucket.</p> <p>Some of this should look familiar from the script we created in the last post.
+It would be handy to store both this script and the <code>aursync</code> script from my
+previous post inside our repo under the <code>./bin/</code> directory.</p> <h2 id="example-config-meta-packages"><a href="#example-config-meta-packages" aria-hidden="true" class="header-anchor">#</a> Example Config Meta-Packages</h2> <p>Here are some examples of system config meta-packages that others have created:</p> <ul><li><a href="https://github.com/mdaffin/arch-pkgs/tree/master/pkg/mdaffin" target="_blank" rel="noopener noreferrer">mdaffin/arch-pkgs<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></li> <li><a href="https://github.com/Earnestly/pkgbuilds/tree/master/system-config" target="_blank" rel="noopener noreferrer">Earnestly/pkgbuilds<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></li> <li><a href="https://github.com/Foxboron/PKGBUILDS/tree/master/foxboron-system" target="_blank" rel="noopener noreferrer">Foxboron/PKGBUILDS<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></li></ul> <h2 id="summary"><a href="#summary" aria-hidden="true" class="header-anchor">#</a> Summary</h2> <p>Now, this is quite a lot of work to set up initially and might not be worth it
+if you only manage one or two Arch Linux systems that you rarely change. But if
+you manage multiple systems and want to keep them in sync it can be worth the
+effort. Once you have set everything up for the first time tweaks to the
+packages are much simpler to make and ongoing maintenance less time consuming
+than manually ensuring all of your systems have your latest settings.</p> <p>It is also worth noting that this does not solve the issue of keeping user
+files in sync. But most of the user files I want to keep in sync also have
+system level defaults that I can keep in sync instead lowering the number of
+files I need to manage in my home directory. This works best when you only have
+one user, or all your users are fine with the same default settings, but they
+can always override them within their own home directory like you normally
+would.</p> <p><em><a href="https://www.reddit.com/r/archlinux/comments/7v7g4w/managing_multiple_arch_linux_systems_with/" target="_blank" rel="noopener noreferrer">Discuss on Reddit<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></em></p></div> <div class="page-edit"><!----> <!----></div> <div class="page-nav"><p class="inner"><span class="prev">
+        ←
+        <a href="/linux/archlinux-repo-in-aws-bucket/" class="prev">
+          Hosting an Arch Linux Repo in an Amazon S3 Bucket
+        </a></span> <span class="next"><a href="/linux/archlinux-installer/">
+          Creating a Custom Arch Linux Installer
+        </a>
+        →
+      </span></p></div> </div> <!----></div></div>
+    <script src="/assets/js/16.b90f9255.js" defer></script><script src="/assets/js/app.45b43183.js" defer></script>
+  </body>
+</html>
