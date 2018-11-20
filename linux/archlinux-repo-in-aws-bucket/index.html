@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Automating Arch Linux Part 1: Hosting an Arch Linux Repo in an Amazon S3 Bucket | AbdiasRiver</title>
+    <meta name="description" content="How to host an Arch Linux repository in an Amazon S3 bucket with aurutils">
+    <link rel="icon" href="/logo.png">
+    
+    <link rel="preload" href="/assets/css/0.styles.e3a321cd.css" as="style"><link rel="preload" href="/assets/js/app.f7449cef.js" as="script"><link rel="preload" href="/assets/js/2.fe5d27c1.js" as="script"><link rel="prefetch" href="/assets/js/10.a8f9e5e8.js"><link rel="prefetch" href="/assets/js/11.6d25340e.js"><link rel="prefetch" href="/assets/js/12.e9e42bba.js"><link rel="prefetch" href="/assets/js/13.5eef80ac.js"><link rel="prefetch" href="/assets/js/14.d904ae96.js"><link rel="prefetch" href="/assets/js/15.a7818c58.js"><link rel="prefetch" href="/assets/js/16.7972a134.js"><link rel="prefetch" href="/assets/js/17.afc2aff7.js"><link rel="prefetch" href="/assets/js/18.0fb88f93.js"><link rel="prefetch" href="/assets/js/19.e5a73b22.js"><link rel="prefetch" href="/assets/js/20.828ab6f3.js"><link rel="prefetch" href="/assets/js/3.9cc3fdf5.js"><link rel="prefetch" href="/assets/js/4.ca17b628.js"><link rel="prefetch" href="/assets/js/5.fc2644be.js"><link rel="prefetch" href="/assets/js/6.beb4cc32.js"><link rel="prefetch" href="/assets/js/7.d8cda677.js"><link rel="prefetch" href="/assets/js/8.d29e16a7.js"><link rel="prefetch" href="/assets/js/9.8041cf29.js">
+    <link rel="stylesheet" href="/assets/css/0.styles.e3a321cd.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/" class="home-link router-link-active"><!----> <span class="site-name">AbdiasRiver</span></a> <div class="links" style="max-width:nullpx;"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/" class="nav-link">Home</a></div><div class="nav-item"><a href="/blog/" class="nav-link">Blog</a></div><div class="nav-item"><a href="/linux/" class="nav-link router-link-active">Linux</a></div><div class="nav-item"><a href="/windows/" class="nav-link">Windows</a></div><div class="nav-item"><a href="https://github.com/abdiasriver" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  Github
+  <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <div class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/" class="nav-link">Home</a></div><div class="nav-item"><a href="/blog/" class="nav-link">Blog</a></div><div class="nav-item"><a href="/linux/" class="nav-link router-link-active">Linux</a></div><div class="nav-item"><a href="/windows/" class="nav-link">Windows</a></div><div class="nav-item"><a href="https://github.com/abdiasriver" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  Github
+  <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></div> <!----></nav>  <ul class="sidebar-links"><li><a href="/linux/archlinux-repo-in-aws-bucket/" class="active sidebar-link">Hosting an Arch Linux Repo in an Amazon S3 Bucket</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/linux/archlinux-repo-in-aws-bucket/#dependencies" class="sidebar-link">Dependencies</a></li><li class="sidebar-sub-header"><a href="/linux/archlinux-repo-in-aws-bucket/#creating-the-amazon-s3-bucket" class="sidebar-link">Creating the Amazon S3 Bucket</a></li><li class="sidebar-sub-header"><a href="/linux/archlinux-repo-in-aws-bucket/#access-credentials" class="sidebar-link">Access Credentials</a></li><li class="sidebar-sub-header"><a href="/linux/archlinux-repo-in-aws-bucket/#aurutils-building-and-managing-packages" class="sidebar-link">Aurutils - Building and Managing Packages</a></li><li class="sidebar-sub-header"><a href="/linux/archlinux-repo-in-aws-bucket/#uploading-to-the-s3-bucket" class="sidebar-link">Uploading to the S3 Bucket</a></li><li class="sidebar-sub-header"><a href="/linux/archlinux-repo-in-aws-bucket/#fetching-remote-changes" class="sidebar-link">Fetching Remote Changes</a></li><li class="sidebar-sub-header"><a href="/linux/archlinux-repo-in-aws-bucket/#removing-a-package" class="sidebar-link">Removing a package</a></li><li class="sidebar-sub-header"><a href="/linux/archlinux-repo-in-aws-bucket/#wrapper-scripts" class="sidebar-link">Wrapper Scripts</a></li><li class="sidebar-sub-header"><a href="/linux/archlinux-repo-in-aws-bucket/#amazon-aws-s3-alternatives" class="sidebar-link">Amazon AWS S3 Alternatives</a></li></ul></li><li><a href="/linux/archlinux-meta-packages/" class="sidebar-link">Managing Arch Linux with Meta Packages</a></li><li><a href="/linux/archlinux-installer/" class="sidebar-link">Creating a Custom Arch Linux Installer</a></li></ul> </div> <div class="page"> <div class="content"><h1 id="automating-arch-linux-part-1-hosting-an-arch-linux-repo-in-an-amazon-s3-bucket"><a href="#automating-arch-linux-part-1-hosting-an-arch-linux-repo-in-an-amazon-s3-bucket" aria-hidden="true" class="header-anchor">#</a> Automating Arch Linux Part 1: Hosting an Arch Linux Repo in an Amazon S3 Bucket</h1> <div class="tip custom-block"><p class="custom-block-title">Update on 2018-05-20</p> <p>I have updated this guide to switch from <code>repose</code> and <code>s3fs</code> to <code>repo-add</code> and
+<code>s3cmd</code> due to a number of limitation in <code>repose</code> and the fact that <code>aurutils</code>
+is dropping support for it as well as some instabilities with <code>s3fs</code> on weaker
+internet connections.</p></div> <p>In this three-part series, I will show you one way to simplify and manage
+multiple Arch Linux systems using a custom repo, a set of meta-packages and a
+scripted installer. Each part is standalone and can be used by its self, but
+they are designed to build upon and complement each other each focusing on a
+different part of the problem.</p> <ul><li><strong>Part 1:</strong> <em>Hosting an Arch Linux Repo in an Amazon S3 Bucket</em></li> <li><strong>Part 2:</strong> <a href="/linux/archlinux-meta-packages/">Managing Arch Linux with Meta Packages</a></li> <li><strong>Part 3:</strong> <a href="/linux/archlinux-installer/">Creating a Custom Arch Linux Installer</a></li></ul> <p>When you use Arch Linux for any length of time you start collecting sets of
+<a href="https://aur.archlinux.org/" target="_blank" rel="noopener noreferrer">AUR<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a> packages that you frequently use. Now, Arch Linux has loads of <a href="https://wiki.archlinux.org/index.php/AUR_helpers" target="_blank" rel="noopener noreferrer">AUR
+helpers<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a> that make managing AUR packages painless, but when you start using
+arch on multiple systems it becomes annoying and time consuming to rebuild AUR
+packages on each system. In this post, I will show you how to use an Amazon S3
+bucket to create a cheap, low maintenance Arch Linux repository. As well as
+making use of the <code>aurutils</code> package to make building and upgrading AUR packages
+a painless exercise.</p> <div class="danger custom-block"><p class="custom-block-title">WARNING</p> <p>Although everything we are going to do in this post will fit inside the <strong>AWS
+free tier</strong>, it <strong>only lasts</strong> for <strong>12 months</strong>. Make sure to <strong>delete</strong> any
+<strong>resources</strong> you create once you are done to avoid an <strong>unexpected charge</strong>
+from AWS way in the future. Even without the free tier, it should only cost no
+more than a few dollars a month to maintain the bucket - even with a very large
+repository. You can also use alternatives like Digital Oceans Spaces, Google
+Cloud or a static file web server.</p></div> <h2 id="dependencies"><a href="#dependencies" aria-hidden="true" class="header-anchor">#</a> Dependencies</h2> <p>We only require a few packages to get us going, of which only <code>aurutils</code> needs to
+be installed from AUR. It will be the only package we are required to
+build and install manually.</p> <ul><li><a href="https://github.com/AladW/aurutils" target="_blank" rel="noopener noreferrer">aurutils<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a>: a set of utilities that make it easy to manage/update a repo with
+AUR packages.</li> <li><a href="https://github.com/s3tools/s3cmd" target="_blank" rel="noopener noreferrer">s3cmd<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a>: a tool to upload and download files from an AWS S3 bucket.</li> <li>base-devel: needed to build aurutils and other packages.</li></ul> <p>To install all of these run the following.</p> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token function">sudo</span> pacman -S --needed s3cmd base-devel
+<span class="token function">wget</span> https://aur.archlinux.org/cgit/aur.git/snapshot/aurutils.tar.gz
+<span class="token function">tar</span> -xf aurutils.tar.gz
+<span class="token function">cd</span> aurutils
+makepkg -sci
+</code></pre></div><p>If you get the following error while running <code>makepkg</code>.</p> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token operator">==</span><span class="token operator">&gt;</span> Verifying <span class="token function">source</span> <span class="token function">file</span> signatures with gpg<span class="token punctuation">..</span>.
+    aurutils-1.5.3.tar.gz <span class="token punctuation">..</span>. FAILED <span class="token punctuation">(</span>unknown public key 6BC26A17B9B7018A<span class="token punctuation">)</span>
+<span class="token operator">==</span><span class="token operator">&gt;</span> ERROR: One or <span class="token function">more</span> PGP signatures could not be verified<span class="token operator">!</span>
+</code></pre></div><p>Simply download the missing key with the following before running <code>makepkg</code>
+above.</p> <div class="language-bash extra-class"><pre class="language-bash"><code>gpg --recv-key 6BC26A17B9B7018A
+</code></pre></div><h2 id="creating-the-amazon-s3-bucket"><a href="#creating-the-amazon-s3-bucket" aria-hidden="true" class="header-anchor">#</a> Creating the Amazon S3 Bucket</h2> <p>Sign in to <a href="https://s3.console.aws.amazon.com/s3/home?region=us-east-1" target="_blank" rel="noopener noreferrer">Amazon's console<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a> and head to the <a href="https://s3.console.aws.amazon.com/s3/home?region=us-east-1" target="_blank" rel="noopener noreferrer">Amazon S3<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a> interface.
+You will be required to enter your credit card details in order to create the
+bucket, this should be free for the first year if you stay under 5GB of storage
+and <a href="https://aws.amazon.com/s3/pricing/" target="_blank" rel="noopener noreferrer">fairly cheap<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a> after that.</p> <p>Click on the create bucket button.</p> <p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAI0AAAAkCAYAAAC0TbmDAAAFQElEQVR4nO2Z608cVRiH+zdRJVq10faDFxpiUNPWGx8sxmiqqWhiUpNaTay2GoytiYUi3QoLpVCakorQSEsttEDbUNruhWUvMMvemN1ld2Z3Z+f288Oyy84wy85ZS5F6Jnk+cGbmPbdnznnPsqWq2QYKhYQtG90AyuaDSkMhhkpDIYZKQyGGSkMhhkpDIYZKQyGGSkMhhkpDIYZKQyGGSkMhpmJpDl1dwGQghclACoeuLmx4R/4LjPt5tE2xj009pahYmluBFPLXrUCq4gbssDjRPh0FkxCRlVWEeQljDI8Dg/OPbBCuzXHouBfdNJP5MOr5N33eUGlebJ9BkBMR5ER8cy2Ad/u8qL/gxfGJMNi0jCdbjN+rPkWl+d9KM+xNgk3L2H7asereDotTM0hn78dw0bmEuCBjsqi+ppthMAkRgqzCHRPw1UhAE6dxiMF0OA1OVBAXZIz4OOzqdBXuX3QuQX/VnZ01FdtoMtuno+h+EAMnKlgSZJyeYrG16BknK6DpZljz3uBsAn2OuKbshxshzC1lISoqIikJliJJ9NLsH5gHJyr48sqCqXFZq88PVZo9vW7s6/cVcLCZQoUONqO5t6fXXTbeM7/ZIanAicmIqS9LUoDDIwFUn8q9W9Vsw8nbi2ASIj4emMeuThc+u8wgmVXw+WWm8O7BYT8ODM6jtsuF3T1uDLkTcLKCZiKNvjozsY3ayYsK2qZY1Ha60DjEgMsq+PFGiEialjuL4EQFX48EUNvlQv0FL74bDRpKc3DYD15U8Mmf80RtX/eVZk+ve5WZ5a5y4uzuycVsHCo9CcWDNO7nNWVPt9qRkVR8eGlOU/7rrQjGGL5krG2tdsgq8Ma5lfbpB7DS2ON+Hg42oyk7PhFGmJdMS7Ot1Y6MrGokMaqnbYrFsbEQklkF7130Ebd93aVp6PcRS9PQ71szJqk0+g7u7fWUrJtJiIXnXj/nxoiPQywjQy16Zv/AypepH0CzsY3a2f0gpinbtzx2z7U5TEnz5nLddd2lt4txP48QLyErq9jb66loXNZdmhqri0CX3FVjda0Z89k2ByQV+MXk9qRP/N46nxuc4hXDiCAn4rw9jhqrC9UtNmxttkFSgE8HSy/VZmObkaZBJ42dzayS5rInWZAmX3c5aYa9SSymJVh1E2+27Y8kEd5+2oGGfl8BJysUBHGyguaeUWJrxLA3iWiJRPgFXSKslya/jJ+YKC3dSx0zAIDarhWB8ytcsTTD3iS67seIYpeaTLvB9hRJrWxPY8zqvsxEhYq2p7ruWbBpWTP5Ztuu7/O6SKPnYZyeXu6YQYiXEFg+cr/T50H9BS9+HtceuUsdMU/eXkRGUvH9aBCvnp3F7h43vv07iKOjucSzusWGhKDg2Fju7+ctDkwspKCoWml+n47ifiSDGqsLOyxOPNFSPnapyTRKhItXlqabYTBJETvPOLG12YajoyFIKjSJcOtyInx4JIDaThfe7vPgyHXjRNhIHDNtN+rzppCmqtmGnWec6LgXBZMUC8fLa3Mc3i/Kidb6XeLI9SDcMQGioiKekTHu5/HRHytJ4AeX5uCOCYikJHjiWXzxlx9pSdVI84rVhTvBFDJSLuvJHz/LxTaSpn06il57HJyoICEosNxlNRPyVKsdfY444hkZQT53lC7envL8tCyXpABhXtL0Xz8er3XPIpqW0TEdNT0upfq8KaShbD4qlqah34crviSu+JJlT0qUxwv6X24KMVQaCjFUGgoxVBoKMVQaCjFUGgoxVBoKMVQaCjFUGgoxVBoKMVQaCjH/AGiEBApFN88xAAAAAElFTkSuQmCC" alt="Create Bucket"></p> <p>Name your bucket and select the region you want to host it in.</p> <p><img src="/assets/img/02-name-bucket.9c0cb906.png" alt="Name the Bucket"></p> <p>Then click on Next twice to get to (3) Set permissions and make the bucket
+public. This will allow anyone in the world to read the bucket and thus allows
+<code>pacman</code> to download the packages anonymously.</p> <p><img src="/assets/img/03-public-bucket.f9df4738.png" alt="Public Bucket"></p> <p>After you should have one public bucket listed like so.</p> <p><img src="/assets/img/04-bucket-list.ce9cb8c9.png" alt="Bucket List"></p> <h2 id="access-credentials"><a href="#access-credentials" aria-hidden="true" class="header-anchor">#</a> Access Credentials</h2> <p>We now need to create an access key that has permissions to edit this bucket.
+We can do this by creating a new restricted user that only have access to the
+Amazon S3 buckets.</p> <p>Head over to the <a href="https://console.aws.amazon.com/iam/home#/users" target="_blank" rel="noopener noreferrer">AWS IAM management console<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a> and add a new user. Then enter
+the username and ensure <em>Programmatic access</em> check box is selected.</p> <p><img src="/assets/img/05-create-user.59ab3d94.png" alt="Account Name"></p> <p>Click Next to head to the permission page then <em>Attach existing policies
+directly</em>. Search for <em>S3</em> and check <em>AmazonS3FullAccess</em>.</p> <p><img src="/assets/img/06-permissions.8403b414.png" alt="Account Permissions"></p> <p>Click <em>Next</em> and on the review page double check it has <em>Programmatic access</em>
+and <em>AmazonS3FullAccess</em>.</p> <p><img src="/assets/img/07-review.aa11b2cf.png" alt="Account Review"></p> <p>Click <em>Create User</em> to get the access key. Take note of the <em>Access key ID</em> as
+well as the <em>Secret access key</em>. Ensure you save these somewhere, once you
+leave this page you will not have access to the secret key through the AWS
+console and will have to regenerate a new key.</p> <p><img src="/assets/img/08-access-key.4167e633.png" alt="Account Secret"></p> <p>Keep this key secret as it will give anyone with it the ability to
+create/modify your buckets. If you lose the key or no longer require it then
+head to the user page and remove it from the user.</p> <p>Save it to <code>~/.s3cfg</code> in the form</p> <div class="language-ini extra-class"><pre class="language-ini"><code><span class="token selector">[default]</span>
+<span class="token constant">access_key</span> <span class="token attr-value"><span class="token punctuation">=</span> &lt;ACCESS_KEY&gt;</span>
+<span class="token constant">secret_key</span> <span class="token attr-value"><span class="token punctuation">=</span> &lt;SECRET_KEY&gt;</span>
+</code></pre></div><p>And ensure it is only readable by your user</p> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token function">chmod</span> 0600 ~/.s3cfg
+</code></pre></div><h2 id="aurutils-building-and-managing-packages"><a href="#aurutils-building-and-managing-packages" aria-hidden="true" class="header-anchor">#</a> Aurutils - Building and Managing Packages</h2> <p>Aurutils contains a suite of utilities that can be used to manage a repo of AUR
+packages. The two main utilities we will use are <code>aursearch</code>, which can search
+AUR for packages that match a given pattern.</p> <div class="language-bash extra-class"><pre class="language-bash"><code>$ aursearch aurutils
+aur/aurutils 1.5.3-5 <span class="token punctuation">(</span>55<span class="token punctuation">)</span>
+    helper tools <span class="token keyword">for</span> the arch user repository
+aur/aurutils-git 1.5.3.r234.g15ef2ab-1 <span class="token punctuation">(</span>5<span class="token punctuation">)</span>
+    helper tools <span class="token keyword">for</span> the arch user repository
+</code></pre></div><p>And <code>aursync</code> which will download and build packages and ensure packages in the
+repo are up to date.</p> <p>For <code>aursync</code> to work, we need to add a repo to <code>/etc/pacman.conf</code></p> <div class="language-ini extra-class"><pre class="language-ini"><code><span class="token selector">[mdaffin]</span>
+<span class="token constant">SigLevel</span> <span class="token attr-value"><span class="token punctuation">=</span> Optional TrustAll</span>
+<span class="token constant">Server</span> <span class="token attr-value"><span class="token punctuation">=</span> https://s3.eu-west-2.amazonaws.com/mdaffin-arch/repo/x86_64/</span>
+</code></pre></div><p>Give your repo a unique name by replacing <code>[mdaffin]</code> with something else.
+Change the URL to that of your bucket/repo path. You can get the exact URL by
+creating a file inside the directory and getting a link to that file from the
+<a href="https://s3.console.aws.amazon.com/s3/home" target="_blank" rel="noopener noreferrer">Amazon Web Console<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a>.</p> <p>Now we can create the repo and upload our first package to it. For this, we are
+going to rebuild the aurutils package as it will be handy to have that stored
+in our repo. But first, we need to create a directory to store the repo as well
+as initialise the database files.</p> <div class="language-bash extra-class"><pre class="language-bash"><code>$ <span class="token function">mkdir</span> -p local-repo
+$ repo-add local-repo/mdaffin.db.tar.xz
+$ aursync --repo mdaffin --root local-repo aurutils
+</code></pre></div><p>Replace <code>mdaffin</code> with the name of your repo, this must match the section in
+<code>/etc/pacman.conf</code>. Since we have a remote repo we need to tell <code>aursync</code> were
+to place the files using <code>--root &lt;dir&gt;</code> pointing it to a local package cache
+(exact location does not matter).</p> <p>If all goes well you should end up with the package and repo database inside
+the cache directory.</p> <div class="language-bash extra-class"><pre class="language-bash"><code>$ <span class="token function">ls</span> local-repo
+aurutils-1.5.3-5-any.pkg.tar.xz  mdaffin.db  mdaffin.files
+</code></pre></div><p>To check for and update all the packages in the repo simply add <code>-u</code> to the
+<code>aursync</code> command.</p> <div class="language-bash extra-class"><pre class="language-bash"><code>$ aursync --repo mdaffin --root local-repo -u
+</code></pre></div><h2 id="uploading-to-the-s3-bucket"><a href="#uploading-to-the-s3-bucket" aria-hidden="true" class="header-anchor">#</a> Uploading to the S3 Bucket</h2> <p>Now that we have the packages locally we need to upload them to the bucket.
+This is where <code>s3cmd</code> comes in, we can tell it to take all the files in our
+local cache and upload them to a given directory in the bucket. There are a
+couple ways to do this, first is the <code>put</code> or <code>cp</code> methods which will copy up
+any files we give them, much like the local <code>cp</code> command. But as our local
+cache grows we will just waste bandwidth and operations uploading the same
+unchanged files over and over again. This is where the <code>sync</code> command comes in,
+much like <code>rsync</code> it checks the remote to see if the file already exists and if
+it is different from the local copy. Only if it is missing or differs will it
+upload the new files.</p> <p>There is one problem, S3 buckets do not support symlinks, which <code>repo-add</code>
+creates for us. We need to tell it to explicitly copy the files the symlinks
+point to with the <code>--follow-symlinks</code> flag. And lastly, we need to set the
+public permissions on any file we upload with the <code>--acl-public</code> flag.</p> <div class="language-bash extra-class"><pre class="language-bash"><code>$ s3cmd <span class="token function">sync</span> --follow-symlinks --acl-public local-repo/ s3://mdaffin-arch/repo/x86_64/
+</code></pre></div><p>The packages should now be visible on the Amazon Web Console (or via <code>s3cmd ls s3://...</code>) and installable via <code>pacman</code>.</p> <div class="language-bash extra-class"><pre class="language-bash"><code>$ <span class="token function">sudo</span> pacsync mdaffin
+$ pacman -Ss aurutils
+mdaffin/aurutils 1.5.3-5 <span class="token punctuation">[</span>installed<span class="token punctuation">]</span>
+    helper tools <span class="token keyword">for</span> the arch user repository
+</code></pre></div><p>And that's it, you have created a repo inside an Amazon S3 bucket. You can add
+more packages to this repo using the <code>aursync</code> command above.</p> <h2 id="fetching-remote-changes"><a href="#fetching-remote-changes" aria-hidden="true" class="header-anchor">#</a> Fetching Remote Changes</h2> <p>If you want to manage this from multiple computers then you need a way to sync
+up the repos on each system. This can easily be done by reversing the sync
+command. For this, we do not need the <code>--follow-symlinks</code> flag as there are no
+symlinks in the bucket nor the <code>--acl-public</code> flag as it does not make sense
+for a local file. But the <code>--delete-removed</code> is useful for clearing up files
+that have been deleted from the remote bucket to stop them from being restored
+when you next push changes.</p> <div class="language-bash extra-class"><pre class="language-bash"><code>$ s3cmd <span class="token function">sync</span> --delete-removed s3://mdaffin-arch/repo/x86_64/ local-repo/ 
+</code></pre></div><p>But this will download all files from the remote which can grow quite large
+over time. We really only want to add or remove a few packages at a time and it
+is far more efficient to only download the repo (if it has changed), make any
+changes to it then upload any required files followed by the changed database.
+With this, we can also only download a single copy of the database, rather than
+both copies and manually create the symlinks. Note that we do not need the
+<code>--delete-removed</code> flag as the database files should always exist both locally
+and remotely.</p> <div class="language-bash extra-class"><pre class="language-bash"><code>$ s3cmd <span class="token function">sync</span> s3://mdaffin-arch/repo/x86_64/mdaffin.<span class="token punctuation">{</span>db,files<span class="token punctuation">}</span>.tar.xz local-repo/
+$ <span class="token function">ln</span> -sf local-repo/mdaffin.db.tar.xz local-repo/mdaffin.db
+$ <span class="token function">ln</span> -sf local-repo/mdaffin.files.tar.xz local-repo/mdaffin.files
+</code></pre></div><h2 id="removing-a-package"><a href="#removing-a-package" aria-hidden="true" class="header-anchor">#</a> Removing a package</h2> <p>If you are keeping a full copy of the remote repo locally you can simply
+remove the package and push the changes with the <code>--delete-removed</code> flag.</p> <div class="language-bash extra-class"><pre class="language-bash"><code>$ repo-remove local-repo/mdaffin.db.tar.xz aurutils
+$ <span class="token function">rm</span> local-repo/aurutils-*.pkg.tar.xz
+$ s3cmd <span class="token function">sync</span> --delete-removed --follow-symlinks --acl-public local-repo/ s3://mdaffin-arch/repo/x86_64/
+</code></pre></div><p>However, this cannot be done if we are only downloading the database as we will
+be missing more of the packages and thus end up deleting most of our remote
+repo. Instead, we should update the local cache to remove the package, push only
+the repository files then tell the remote to delete the package.</p> <div class="language-bash extra-class"><pre class="language-bash"><code>$ repo-remove local-repo/mdaffin.db.tar.xz aurutils
+$ s3cmd <span class="token function">sync</span> --follow-symlinks --acl-public local-repo/mdaffin.<span class="token punctuation">{</span>db,files<span class="token punctuation">}</span><span class="token punctuation">{</span>,.tar.xz<span class="token punctuation">}</span> s3://mdaffin-arch/repo/x86_64/
+$ s3cmd <span class="token function">rm</span> <span class="token string">&quot;s3://mdaffin-arch/repo/x86_64/aurutils-*.pkg.tar.xz&quot;</span>
+</code></pre></div><h2 id="wrapper-scripts"><a href="#wrapper-scripts" aria-hidden="true" class="header-anchor">#</a> Wrapper Scripts</h2> <p>We can automate most of this with a simple wrapper script around <code>aursync</code>.
+Simply save this script somewhere, replace the <code>REMOTE_PATH</code> and
+<code>REPO_NAME</code> variables with your own and call it like you would <code>aursync</code>:
+<code>./aursync_wrapper PACKAGE</code> or <code>./aursync_wrapper -u</code>.</p> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token shebang important">#!/bin/bash</span>
+<span class="token comment"># Wraps aursync command to mount an amazon s3 bucket which contains a repository</span>
+<span class="token keyword">set</span> -uo pipefail
+<span class="token function">trap</span> <span class="token string">'s=<span class="token variable">$?</span>; echo &quot;<span class="token variable">$0</span>: Error on line &quot;<span class="token variable">$LINENO</span>&quot;: <span class="token variable">$BASH_COMMAND</span>&quot;; exit <span class="token variable">$s</span>'</span> ERR
+
+REMOTE_PATH<span class="token operator">=</span>s3://mdaffin-arch/repo/x86_64
+LOCAL_PATH<span class="token operator">=</span><span class="token variable">$HOME</span>/.local/share/arch-repo
+REPO_NAME<span class="token operator">=</span>mdaffin
+
+<span class="token function">mkdir</span> -p <span class="token string">&quot;<span class="token variable">$LOCAL_PATH</span>&quot;</span>
+
+<span class="token comment">## Sync remote DB to local ##</span>
+s3cmd <span class="token function">sync</span> <span class="token string">&quot;<span class="token variable">$REMOTE_PATH</span>/<span class="token variable">$REPO_NAME</span>&quot;</span>.<span class="token punctuation">{</span>db,files<span class="token punctuation">}</span>.tar.xz <span class="token string">&quot;<span class="token variable">$LOCAL_PATH</span>/&quot;</span>
+<span class="token function">ln</span> -sf <span class="token string">&quot;<span class="token variable">$REPO_NAME</span>.db.tar.xz&quot;</span> <span class="token string">&quot;<span class="token variable">$LOCAL_PATH</span>/<span class="token variable">$REPO_NAME</span>.db&quot;</span>
+<span class="token function">ln</span> -sf <span class="token string">&quot;<span class="token variable">$REPO_NAME</span>.files.tar.xz&quot;</span> <span class="token string">&quot;<span class="token variable">$LOCAL_PATH</span>/<span class="token variable">$REPO_NAME</span>.files&quot;</span>
+
+<span class="token comment">## Clean up older packages that may or may not have been deleted from the</span>
+<span class="token comment">## remote so that we do not reupload them</span>
+<span class="token function">rm</span> -f <span class="token string">&quot;<span class="token variable">$LOCAL_PATH</span>/&quot;</span>*.pkg.tar.xz
+
+aursync --repo <span class="token string">&quot;<span class="token variable">$REPO_NAME</span>&quot;</span> --root <span class="token string">&quot;<span class="token variable">$LOCAL_PATH</span>&quot;</span> <span class="token string">&quot;<span class="token variable">$@</span>&quot;</span> <span class="token operator">||</span> <span class="token boolean">true</span>
+
+<span class="token comment">## Sync local DB to remote ##</span>
+s3cmd <span class="token function">sync</span> --follow-symlinks --acl-public \
+    <span class="token string">&quot;<span class="token variable">$LOCAL_PATH</span>/&quot;</span>*.pkg.tar.xz \
+    <span class="token string">&quot;<span class="token variable">$LOCAL_PATH</span>/<span class="token variable">$REPO_NAME</span>&quot;</span>.<span class="token punctuation">{</span>db,files<span class="token punctuation">}</span><span class="token punctuation">{</span>,.tar.xz<span class="token punctuation">}</span> \
+    <span class="token string">&quot;<span class="token variable">$REMOTE_PATH</span>/&quot;</span>
+</code></pre></div><p>And to remove a package use the follow script and pass it the package you want
+to remove: <code>./del-from-repo aurutils</code></p> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token shebang important">#!/bin/bash</span>
+<span class="token comment"># Wraps aursync command to mount an amazon s3 bucket which contains a repository</span>
+<span class="token keyword">set</span> -uo pipefail
+<span class="token function">trap</span> <span class="token string">'s=<span class="token variable">$?</span>; echo &quot;<span class="token variable">$0</span>: Error on line &quot;<span class="token variable">$LINENO</span>&quot;: <span class="token variable">$BASH_COMMAND</span>&quot;; exit <span class="token variable">$s</span>'</span> ERR
+
+package<span class="token operator">=</span>$<span class="token punctuation">{</span>1:?<span class="token string">&quot;Missing package&quot;</span><span class="token punctuation">}</span>
+
+REMOTE_PATH<span class="token operator">=</span>s3://mdaffin-arch/repo/x86_64
+LOCAL_PATH<span class="token operator">=</span><span class="token variable">$HOME</span>/.local/share/arch-repo
+REPO_NAME<span class="token operator">=</span>mdaffin
+
+<span class="token function">mkdir</span> -p <span class="token string">&quot;<span class="token variable">$LOCAL_PATH</span>&quot;</span>
+
+<span class="token comment">## Sync remote DB to local ##</span>
+s3cmd <span class="token function">sync</span> <span class="token string">&quot;<span class="token variable">$REMOTE_PATH</span>/<span class="token variable">$REPO_NAME</span>&quot;</span>.<span class="token punctuation">{</span>db,files<span class="token punctuation">}</span>.tar.xz <span class="token string">&quot;<span class="token variable">$LOCAL_PATH</span>/&quot;</span>
+<span class="token function">ln</span> -sf <span class="token string">&quot;<span class="token variable">$REPO_NAME</span>.db.tar.xz&quot;</span> <span class="token string">&quot;<span class="token variable">$LOCAL_PATH</span>/<span class="token variable">$REPO_NAME</span>.db&quot;</span>
+<span class="token function">ln</span> -sf <span class="token string">&quot;<span class="token variable">$REPO_NAME</span>.files.tar.xz&quot;</span> <span class="token string">&quot;<span class="token variable">$LOCAL_PATH</span>/<span class="token variable">$REPO_NAME</span>.files&quot;</span>
+
+repo-remove <span class="token string">&quot;<span class="token variable">$LOCAL_PATH</span>/<span class="token variable">$REPO_NAME</span>.db.tar.xz&quot;</span> <span class="token string">&quot;<span class="token variable">$@</span>&quot;</span>
+s3cmd <span class="token function">sync</span> --follow-symlinks --acl-public <span class="token string">&quot;<span class="token variable">$LOCAL_PATH</span>/<span class="token variable">$REPO_NAME</span>&quot;</span>.<span class="token punctuation">{</span>db,files<span class="token punctuation">}</span><span class="token punctuation">{</span>,.tar.xz<span class="token punctuation">}</span> <span class="token string">&quot;<span class="token variable">$REMOTE_PATH</span>/&quot;</span>
+<span class="token keyword">for</span> package <span class="token keyword">in</span> <span class="token string">&quot;<span class="token variable">$@</span>&quot;</span><span class="token punctuation">;</span> <span class="token keyword">do</span>
+    s3cmd <span class="token function">rm</span> <span class="token string">&quot;<span class="token variable">$REMOTE_PATH</span>/<span class="token variable">$package</span>-*.pkg.tar.xz&quot;</span>
+<span class="token keyword">done</span>
+</code></pre></div><h2 id="amazon-aws-s3-alternatives"><a href="#amazon-aws-s3-alternatives" aria-hidden="true" class="header-anchor">#</a> Amazon AWS S3 Alternatives</h2> <p>If you don't wish to use Amazon buckets there are some alternatives such as
+<a href="https://m.do.co/c/8fba3fc95fef" target="_blank" rel="noopener noreferrer">Digital Ocean Spaces<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a> or <a href="https://cloud.google.com/storage/" target="_blank" rel="noopener noreferrer">Google Cloud Buckets<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a> that can be used in place. Some
+are compatible with the S3 API and thus can be used with the instructions above
+while others require a different way to sync the changes. For example, if you
+have a static file server somewhere you can use <code>rsync</code> in place of most
+<code>s3cmd</code> with the relevant flags set.</p> <p><em><a href="https://www.reddit.com/r/archlinux/comments/7v7g4w/managing_multiple_arch_linux_systems_with/" target="_blank" rel="noopener noreferrer">Discuss on Reddit<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></em></p></div> <div class="page-edit"><!----> <div class="last-updated"><span class="prefix">Actualizado el: </span> <span class="time">11/12/2018, 7:57:48 PM</span></div></div> <div class="page-nav"><p class="inner"><!----> <span class="next"><a href="/linux/archlinux-meta-packages/">
+          Managing Arch Linux with Meta Packages
+        </a>
+        →
+      </span></p></div> </div> <!----></div></div>
+    <script src="/assets/js/2.fe5d27c1.js" defer></script><script src="/assets/js/app.f7449cef.js" defer></script>
+  </body>
+</html>
